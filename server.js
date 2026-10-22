@@ -68,7 +68,10 @@ app.post('/api/webhook/ekqr', async (logReq, logRes) => {
         logRes.status(500).send({ error: error.message });
     }
 });
-
+// Home route taaki browser mein error na aaye
+app.get('/', (req, res) => {
+    res.send('Shopify EkQR Payment Gateway Server is Running Successfully! 🚀');
+});
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
 });
