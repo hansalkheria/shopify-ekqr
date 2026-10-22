@@ -75,3 +75,48 @@ app.get('/', (req, res) => {
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
 });
+const express = require('express');
+const axios = require('axios');
+const app = express();
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Home route
+app.get('/', (req, res) => {
+    res.send('Shopify EkQR Payment Gateway Server is Running Successfully! 🚀');
+});
+
+// 1. Jab customer checkout se Pay Now dabakar yahan aaye
+app.get('/api/payment/checkout', (req, res) => {
+    const { order_id, amount, customer_email } = req.query;
+
+    // Yahan aap apna QR code ya payment page dikha sakte hain
+    res.send(`
+        <!DOCTYPE html>
+        <html lang="hi">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Scan & Pay - EkQR</title>
+            <style>
+                body { font-family: Arial, sans-serif; text-align: center; background: #f4f4f9; padding: 50px; }
+                .card { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: inline-block; }
+                .qr-box { margin: 20px 0; }
+                .amount { font-size: 24px; color: #28a745; font-weight: bold; }
+            </style>
+        </head>
+        <body>
+            <div class="card">
+                <h2>Complete Your Payment</h2>
+                <p>Order ID: <b>#${order_id || 'TEST'}</b></p>
+                <p class="amount">Amount: ₹${amount || '50'}</p>
+                
+                <div class="qr-box">
+                    <!-- Yahan aap apna UPI QR Code ka image ya EkQR ka widget lagayein -->
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=your-upi@paytm&am=${amount}&pn=YourStore" alt="UPI QR Code">
+                </div>
+                
+                <p>Scan using GPay, PhonePe, Paytm or any UPI app</p>
+                <br>
+                <button onclick="verifyPayment('${order_id}')
